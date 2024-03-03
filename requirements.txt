@@ -1,0 +1,2 @@
+# This is a requirements file
+optimum[onnxruntime-directml]
