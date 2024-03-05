@@ -2,11 +2,13 @@
 
 from transformers import AutoTokenizer
 from optimum.onnxruntime import ORTModelForCausalLM
+
 tokenizer = AutoTokenizer.from_pretrained("stabilityai/stablelm-3b-4e1t")
 model = ORTModelForCausalLM.from_pretrained(
     "kazssym/stablelm-3b-4e1t-onnx-fp32",
     provider="DmlExecutionProvider",
 )
+
 inputs = tokenizer("The weather is always wonderful",
                    return_tensors="pt").to(model.device)
 tokens = model.generate(
