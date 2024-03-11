@@ -1,2 +1,3 @@
 # This is a requirements file
-optimum[onnxruntime-directml]
+torch-directml
+optimum[exporters-directml]
