@@ -4,12 +4,23 @@
 """
 
 from optimum.exporters.onnx import main_export
-from torch import float16
+from optimum.onnxruntime import ORTModelForCausalLM
+from onnxruntime import SessionOptions, GraphOptimizationLevel
 
 main_export(
     "stabilityai/stablelm-3b-4e1t",
-    output="./exported",
+    output="./exported/intermediate",
     trust_remote_code=True,
-    # torch_dtype=float16,
+    # dtype="fp16",
     # device="dml",
 )
+
+session_options = SessionOptions()
+session_options.graph_optimization_level = GraphOptimizationLevel.ORT_ENABLE_BASIC
+model = ORTModelForCausalLM.from_pretrained(
+    "./exported/intermediate",
+    provider="DmlExecutionProvider",
+    session_options=session_options,
+)
+
+model.save_pretrained("./exported")
