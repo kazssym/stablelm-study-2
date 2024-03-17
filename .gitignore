@@ -160,5 +160,5 @@ cython_debug/
 #.idea/
 
 ##
-exported*/
-optimized*/
+/exported*
+/optimized*
