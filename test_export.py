@@ -12,8 +12,11 @@ from onnxruntime import SessionOptions, GraphOptimizationLevel
 from optimum.exporters.onnx import main_export
 from optimum.onnxruntime import ORTModelForCausalLM
 
+exported = "./exported-float16"
 with_float16 = True
 
+if os.path.exists("./exported-intermediate/model.onnx_data"):
+    os.remove("./exported-intermediate/model.onnx_data")
 main_export(
     "stabilityai/stablelm-3b-4e1t",
     output="./exported-intermediate",
@@ -42,4 +45,6 @@ model = ORTModelForCausalLM.from_pretrained(
     session_options=session_options,
 )
 
-model.save_pretrained("./exported")
+if os.path.exists(exported + "/model.onnx_data"):
+    os.remove(exported + "/model.onnx_data")
+model.save_pretrained(exported)
