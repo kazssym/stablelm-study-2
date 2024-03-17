@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
 """test_export.py
+
+This script exports a StableLM model into ONNX with optional float16 conversion.
 """
 
+import os
+import onnx
 from onnxconverter_common import float16
 from onnxruntime import SessionOptions, GraphOptimizationLevel
 from optimum.exporters.onnx import main_export
 from optimum.onnxruntime import ORTModelForCausalLM
-import onnx
-import os
 
 with_float16 = True
 
