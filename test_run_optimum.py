@@ -1,13 +1,25 @@
 #!/usr/bin/env python3
 
-from transformers import AutoTokenizer
+"""test_run_optimum.py
+"""
+
+from onnxruntime import SessionOptions, GraphOptimizationLevel
 from optimum.onnxruntime import ORTModelForCausalLM
+from transformers import AutoTokenizer
+import torch_directml
+
+session_options = SessionOptions()
+session_options.graph_optimization_level = GraphOptimizationLevel.ORT_ENABLE_ALL
+session_options.optimized_model_filepath = "./optimized.onnx"
+
+device = torch_directml.device()
 
 tokenizer = AutoTokenizer.from_pretrained("stabilityai/stablelm-3b-4e1t")
 model = ORTModelForCausalLM.from_pretrained(
-    "kazssym/stablelm-3b-4e1t-onnx-fp32",
+    "kazssym/stablelm-3b-4e1t-onnx",
     provider="DmlExecutionProvider",
-)
+    session_options=session_options,
+).to(device)
 
 inputs = tokenizer("The weather is always wonderful",
                    return_tensors="pt").to(model.device)
