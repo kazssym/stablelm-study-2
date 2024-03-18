@@ -5,26 +5,37 @@
 This script runs a StableLM model with Optimum and ONNX Runtime.
 """
 
+import os
 import sys
 import torch_directml
 from onnxruntime import SessionOptions, GraphOptimizationLevel
 from optimum.onnxruntime import ORTModelForCausalLM
 from transformers import AutoTokenizer
 
+MODEL = "kazssym/stablelm-3b-4e1t-onnx"
+OPTIMIZED = "./optimized"
+WITH_FLOAT16 = True
+
+if WITH_FLOAT16:
+    MODEL += "-float16"
+    OPTIMIZED += "-float16"
+
 
 def main() -> int:
     """main
     """
 
+    os.makedirs(OPTIMIZED, exist_ok=True)
+
     session_options = SessionOptions()
     session_options.graph_optimization_level = GraphOptimizationLevel.ORT_ENABLE_ALL
-    session_options.optimized_model_filepath = "./optimized.onnx"
+    session_options.optimized_model_filepath = OPTIMIZED + "/model.onnx"
 
     device = torch_directml.device()
 
-    tokenizer = AutoTokenizer.from_pretrained("kazssym/stablelm-3b-4e1t-onnx")
+    tokenizer = AutoTokenizer.from_pretrained(MODEL)
     model = ORTModelForCausalLM.from_pretrained(
-        "kazssym/stablelm-3b-4e1t-onnx",
+        MODEL,
         provider="DmlExecutionProvider",
         session_options=session_options,
     ).to(device)
